@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} | CoE Portal{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="card border-danger">
+      <div class="card-body">
+        <h1 class="h4 text-danger">{{ title }}</h1>
+        <p class="mb-4">{{ message }}</p>
+        <form method="post" action="{{ confirm_url }}">
+          {{ csrf_token() }}
+          <button type="submit" class="btn btn-danger">Confirm</button>
+          <a href="{{ cancel_url }}" class="btn btn-outline-secondary">Cancel</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

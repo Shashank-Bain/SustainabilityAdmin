@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Cost Rates | CoE Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">Cost Rates</h1>
+  <a href="{{ url_for('admin_bp.costrates_new') }}" class="btn btn-primary">New Cost Rate</a>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-striped mb-0">
+      <thead>
+        <tr>
+          <th>Level</th>
+          <th>Cost Per Day</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cost_rate in cost_rates %}
+          <tr>
+            <td>{{ cost_rate.level }}</td>
+            <td>{{ cost_rate.cost_per_day }}</td>
+            <td class="text-end">
+              <a href="{{ url_for('admin_bp.costrates_edit', cost_rate_id=cost_rate.id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+              <a href="{{ url_for('admin_bp.costrates_delete_confirm', cost_rate_id=cost_rate.id) }}" class="btn btn-sm btn-outline-danger">Delete</a>
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="3" class="text-center text-muted py-4">No cost rates found.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Team Members | CoE Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">Team Members</h1>
+  <a href="{{ url_for('admin_bp.members_new') }}" class="btn btn-primary">New Team Member</a>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-striped mb-0">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Employee ID</th>
+          <th>Gender</th>
+          <th>Level</th>
+          <th>Active</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for member in members %}
+          <tr>
+            <td>{{ member.name }}</td>
+            <td>{{ member.employee_id }}</td>
+            <td>{{ member.gender or "-" }}</td>
+            <td>{{ member.level }}</td>
+            <td>{{ "Yes" if member.active else "No" }}</td>
+            <td class="text-end">
+              <a href="{{ url_for('admin_bp.members_edit', member_id=member.id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+              <a href="{{ url_for('admin_bp.members_delete_confirm', member_id=member.id) }}" class="btn btn-sm btn-outline-danger">Delete</a>
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="6" class="text-center text-muted py-4">No team members found.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

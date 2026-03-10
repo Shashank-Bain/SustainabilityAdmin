@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Billing Summary{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Billing Summary</h1>
+    <a class="btn btn-outline-secondary" href="{{ url_for('dashboard_bp.index', month=month_for_back, manager_id=manager_id, team_id=team_id) }}">Back to Dashboard</a>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <form method="get" class="row g-3 align-items-end">
+        <div class="col-md-2">
+          <label class="form-label" for="year">Year</label>
+          <input id="year" name="year" type="number" min="1900" max="3000" class="form-control" value="{{ year }}">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="manager_id">Manager</label>
+          <select id="manager_id" name="manager_id" class="form-select">
+            <option value="">All Managers</option>
+            {% for manager in managers %}
+              <option value="{{ manager.id }}" {% if manager_id == manager.id %}selected{% endif %}>{{ manager.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="team_id">Team</label>
+          <select id="team_id" name="team_id" class="form-select">
+            <option value="">All Teams</option>
+            {% for team in teams %}
+              <option value="{{ team.id }}" {% if team_id == team.id %}selected{% endif %}>{{ team.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-2 d-grid">
+          <button class="btn btn-primary" type="submit">Apply</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-sm table-striped mb-0 align-middle">
+        <thead>
+          <tr>
+            <th>Month</th>
+            <th>Total Recovery from billed work ($)</th>
+            <th>Client billed recovery ($)</th>
+            <th>IP/CD/Investment recovery ($)</th>
+            <th>Other recovery ($)</th>
+            <th>Total billable hours</th>
+            <th>Total hours</th>
+            <th>Utilization %</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in monthly_rows %}
+            <tr>
+              <td>{{ row.month }}</td>
+              <td>{{ row.recovery_total }}</td>
+              <td>{{ row.client_billed_recovery }}</td>
+              <td>{{ row.ip_cd_investment_recovery }}</td>
+              <td>{{ row.other_recovery }}</td>
+              <td>{{ row.total_billable_hours }}</td>
+              <td>{{ row.total_hours }}</td>
+              <td>{{ row.utilization_pct }}%</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

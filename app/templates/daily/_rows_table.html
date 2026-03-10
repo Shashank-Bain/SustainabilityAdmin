@@ -1,0 +1,111 @@
+<div class="table-responsive">
+  <table class="table table-sm table-bordered align-middle">
+    <thead>
+      <tr>
+        <th>Team Member</th>
+        <th>Team</th>
+        <th>Type</th>
+        <th>Project</th>
+        <th>Hours</th>
+        <th>Charged FTE</th>
+        <th>Billing Manager</th>
+        <th>Notes</th>
+        <th>Billed</th>
+        <th>Cost</th>
+        <th>Margin</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in rows %}
+        {% set f = row_financials.get(row.id) %}
+        <tr>
+          <td>
+            <input type="hidden" name="row_key" value="{{ row.key }}">
+            <input type="hidden" name="{{ row.key }}_id" value="{{ row.id }}">
+            <select class="form-select form-select-sm" name="{{ row.key }}_team_member_id">
+              <option value="">-- none --</option>
+              {% for member in members %}
+                <option value="{{ member.id }}" {% if row.team_member_id == member.id %}selected{% endif %}>{{ member.name }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td>
+            <select class="form-select form-select-sm" name="{{ row.key }}_team_id" required>
+              <option value="">-- select --</option>
+              {% for team in teams %}
+                <option value="{{ team.id }}" {% if row.team_id == team.id %}selected{% endif %}>{{ team.name }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td>
+            <select class="form-select form-select-sm js-activity" name="{{ row.key }}_activity_type">
+              {% for activity in activity_types %}
+                <option value="{{ activity }}" {% if row.activity_type == activity %}selected{% endif %}>{{ activity }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td>
+            <select class="form-select form-select-sm js-project" name="{{ row.key }}_project_id" {% if row.activity_type != 'PROJECT' %}disabled{% endif %}>
+              <option value="">-- none --</option>
+              {% for project in projects %}
+                <option value="{{ project.id }}" {% if row.project_id == project.id %}selected{% endif %}>{{ project.case_code }} - {{ project.project_name }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td><input type="number" class="form-control form-control-sm" name="{{ row.key }}_hours" step="0.5" value="{{ row.hours }}"></td>
+          <td><input type="number" class="form-control form-control-sm" name="{{ row.key }}_charged_fte" step="0.25" value="{{ row.charged_fte }}"></td>
+          <td>
+            <select class="form-select form-select-sm" name="{{ row.key }}_billing_manager_user_id">
+              <option value="">-- none --</option>
+              {% for u in users %}
+                <option value="{{ u.id }}" {% if row.billing_manager_user_id == u.id %}selected{% endif %}>{{ u.name }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td><input type="text" class="form-control form-control-sm" name="{{ row.key }}_notes" value="{{ row.notes }}"></td>
+          <td>
+            {{ f.billed_amount if f else '0.00' }}
+            {% if f and f.warnings %}
+              <span class="badge bg-warning text-dark" title="{{ f.warnings|join('; ') }}">!</span>
+            {% endif %}
+          </td>
+          <td>{{ f.cost_amount if f else '0.00' }}</td>
+          <td>{{ f.margin if f else '0.00' }}</td>
+          <td class="text-center"><input class="form-check-input" type="checkbox" name="{{ row.key }}_delete" value="1"></td>
+        </tr>
+      {% else %}
+        <tr>
+          <td colspan="12" class="text-center text-muted py-3">No rows yet. Click Add Row.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <th colspan="8" class="text-end">Totals</th>
+        <th>{{ totals.billed_amount }}</th>
+        <th>{{ totals.cost_amount }}</th>
+        <th>{{ totals.margin }}</th>
+        <th></th>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+<script>
+  document.addEventListener('change', function (event) {
+    if (!event.target.classList.contains('js-activity')) {
+      return;
+    }
+    const row = event.target.closest('tr');
+    const projectSelect = row.querySelector('.js-project');
+    if (!projectSelect) {
+      return;
+    }
+    const isProject = event.target.value === 'PROJECT';
+    projectSelect.disabled = !isProject;
+    if (!isProject) {
+      projectSelect.value = '';
+    }
+  });
+</script>

@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}Martha Monthly Summary{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">&gt;&gt;&gt; Sustainability &amp; Responsibility (S&amp;R)</h1>
+    <a class="btn btn-outline-secondary" href="{{ url_for('dashboard_bp.index', month=month_for_back, manager_id=manager_id, team_id=team_id) }}">Back to Dashboard</a>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <form method="get" class="row g-3 align-items-end">
+        <div class="col-md-2">
+          <label class="form-label" for="year">Year</label>
+          <input id="year" name="year" type="number" min="1900" max="3000" class="form-control" value="{{ year }}">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="manager_id">Manager</label>
+          <select id="manager_id" name="manager_id" class="form-select">
+            <option value="">All Managers</option>
+            {% for manager in managers %}
+              <option value="{{ manager.id }}" {% if manager_id == manager.id %}selected{% endif %}>{{ manager.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="team_id">Team</label>
+          <select id="team_id" name="team_id" class="form-select">
+            <option value="">All Teams</option>
+            {% for team in teams %}
+              <option value="{{ team.id }}" {% if team_id == team.id %}selected{% endif %}>{{ team.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-2 d-grid">
+          <button class="btn btn-primary" type="submit">Apply</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-sm table-striped mb-0 align-middle">
+        <thead>
+          <tr>
+            <th>Month</th>
+            <th>#FTEs</th>
+            <th>Gross cost ($)</th>
+            <th>Recovery from billed work ($)</th>
+            <th>Net cost to practice ($)</th>
+            <th>Total recovery (%)</th>
+            <th>% recovery from client codes</th>
+            <th>% recovery from other practice IP codes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in monthly_rows %}
+            <tr>
+              <td>{{ row.month }}</td>
+              <td>{{ '%.2f'|format(row.ftes) }}</td>
+              <td>{{ '%.2f'|format(row.gross_cost) }}</td>
+              <td>{{ '%.2f'|format(row.recovery_total) }}</td>
+              <td>{{ '%.2f'|format(row.net_cost) }}</td>
+              <td>{{ '%.2f'|format(row.total_recovery_pct) }}%</td>
+              <td>{{ '%.2f'|format(row.pct_recovery_client) }}%</td>
+              <td>{{ '%.2f'|format(row.pct_recovery_other) }}%</td>
+            </tr>
+          {% endfor %}
+
+          <tr class="table-light">
+            <th>Total cost to practice ($ YTD)</th>
+            <td></td>
+            <td>{{ '%.2f'|format(ytd_budget.ytd_gross_cost) }}</td>
+            <td>{{ '%.2f'|format(ytd_budget.ytd_recovery) }}</td>
+            <td>{{ '%.2f'|format(ytd_budget.ytd_net) }}</td>
+            <td>{{ '%.2f'|format(ytd_budget.ytd_total_recovery_pct) }}%</td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr class="table-light">
+            <th>Total budget allocated ($ YTD)</th>
+            <td colspan="7">{{ '%.2f'|format(ytd_budget.budget_allocated_ytd) }}</td>
+          </tr>
+          <tr class="table-light">
+            <th>Total budget for {{ year }}</th>
+            <td colspan="7">{{ '%.2f'|format(ytd_budget.total_budget_year) }}</td>
+          </tr>
+          <tr class="table-light">
+            <th>% budget utilized</th>
+            <td colspan="7">{{ '%.2f'|format(ytd_budget.budget_utilized_pct) }}%</td>
+          </tr>
+          <tr class="table-light">
+            <th>Unspent budget (Over budget)  ($ YTD)</th>
+            <td colspan="7">{{ '%.2f'|format(ytd_budget.unspent_budget_ytd) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
